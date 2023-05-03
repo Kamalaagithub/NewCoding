@@ -40,25 +40,40 @@ public class UserController
 	@PostMapping("/")
 	public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto)
 	{
+		try{
 		UserDto createUserDto = this.userService.createUser(userDto);
 		return new ResponseEntity<>(createUserDto, HttpStatus.CREATED);
-		
+		}catch(IOException io)
+			log.error(io.getMessage());
+		        throw new PostException("This user cannot be created");
+		}
+				
 	}
 	
 	//PUT - Update user
 	@PutMapping("/{userId}")
 	public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable("userId") Integer userId)
 	{
+		try{
 		UserDto updateduser = this.userService.updateUser(userDto,userId);
 		return ResponseEntity.ok(updateduser);
+		}catcg(IOException io)
+			log.error(io.getMessage());
+		        throw new PostException("This user cannot be updated");
+		}
 	}
  
 	//Delete - Delete user
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") Integer userId)
 	{
+		try{
 		this.deleteUser(userId);
 		return new ResponseEntity<ApiResponse>((HttpStatusCode) new ApiResponse("User Deleted Successfully", true, HttpStatus.OK));
+		}catch(IOException io)
+			log.error(io.getMessage());
+		        throw new PostException("This user cannot be deleted");
+		}
 	}
 	
 	
