@@ -8,9 +8,7 @@ import com.feignpostcommentapi.exception.ResourceNotFoundException;
 import com.feignpostcommentapi.payloads.UserDto;
 import com.feignpostcommentapi.repository.UserRepository;
 import com.feignpostcommentapi.service.UserService;
-
 import lombok.extern.slf4j.Slf4j;
-
 import com.feignpostcommentapi.entity.User;
 
 /*
@@ -20,20 +18,34 @@ import com.feignpostcommentapi.entity.User;
 @Slf4j
 public class UserServiceImpl implements UserService
 {
-	@Autowired
+	
 	private UserRepository userRepo;
 	
+	@Autowired
+	public UserServiceImpl(UserRepository theuUserRepo)
+	{
+	      this.userRepo = theUserRepo;
+	}
+	
+	//Create a User
 	@Override
 	public UserDto createUser(UserDto userDto)
 	{
+		try{
 		User user = this.dtoToUser(userDto);
 		User savedUser = this.userRepo.save(user);
 		UserDto createdUser = this.userToDto(savedUser);
 		return createdUser;
+		}catch(IOException io)
+		     log.error(io.getMessage());
+		     throw new UserException("The user is not created");
+		}    
 	}
 
+        //Update a user
 	@Override
 	public UserDto updateUser(UserDto userDto, Integer userId) {
+		try{
 		User user = this.userRepo.findById(userId)
 				.orElseThrow(()->new ResourceNotFoundException("User","id",userId));
 		
@@ -45,37 +57,51 @@ public class UserServiceImpl implements UserService
 		User updatedUser = this.userRepo.save(user);
 		UserDto userDto1 = this.userToDto(updatedUser);
 		return userDto1;
+		}catch(IOException io)
+		     log.error(io.getMessage());
+		     throw new UserException("The user is not updated");
+		}   
 		
 	}
 
 	@Override
 	public UserDto getUserById(Integer userId) {
-		
+		try{
 		User user = this.userRepo.findById(userId)
 				.orElseThrow(()->new ResourceNotFoundException("User","id",userId));
 		
 		return this.userToDto(user);
-		
+		}catch(IOException io)
+		     log.error(io.getMessage());
+		     throw new UserException("Unable to get the user by userid");
+		}  	
 	}
 
 	@Override
 	public List<UserDto> getAllUsers() {
+		try{
 		List<User> users = this.userRepo.findAll();
-		
 		List<UserDto> userDtos = users.stream().map(user->this.userToDto(user)).collect(Collectors.toList());
-		
 		return userDtos;
+		}catch(IOException io)
+		     log.error(io.getMessage());
+		     throw new UserException("Unable to get all the users.");
+		}  
 		
 	}
 
+        //Delete a User
 	@Override
 	public void deleteUser(Integer userId) {
-		
+		try{
 		User user = this.userRepo.findById(userId)
 		                .orElseThrow(()-> new ResourceNotFoundException("User","id",userId));
 		
 		this.userRepo.delete(user);
-		
+		}catch(IOException io)
+		     log.error(io.getMessage());
+		     throw new UserException("This user is not deleted");
+		}  	
 	}
 	
 	public User dtoToUser(UserDto userDto) {
