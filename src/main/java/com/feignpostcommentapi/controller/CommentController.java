@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.feignpostcommentapi.payloads.ApiResponse;
 import com.feignpostcommentapi.payloads.CommentDto;
 import com.feignpostcommentapi.service.CommentService;
-
+/* 
+ * CommentController is used to create a comment,post a comment, delete a comment.
+ */
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -26,20 +27,30 @@ public class CommentController
 		this.commentService = commentService;
 	}
 	
-	/*
+	
 	@PostMapping("/post/{postId}/comments")
 	public ResponseEntity<CommentDto> createComment(@RequestBody CommentDto commentDto, @PathVariable Integer postId)
 	{
+		try{
 		CommentDto createdComment = this.commentService.createComment(commentDto, postId);
 		return new ResponseEntity<CommentDto>(createdComment, HttpStatus.CREATED);
-	}*/
-
+		}catch(IOException ex){
+			log.error(ex.getMessage());
+		        throw new CommentException("The comment cannot be created");
+		}
+	}	
+		
 	@DeleteMapping("/comments/{commentId}")
-	public ResponseEntity<ApiResponse> deleteComment(@PathVariable Integer commentId) {
-
+	public ResponseEntity<ApiResponse> deleteComment(@PathVariable Integer commentId) 
+	{
+              try{
 		this.commentService.deleteComment(commentId);
-
 		return new ResponseEntity<ApiResponse>(new ApiResponse("Comment deleted successfully !!", true), HttpStatus.OK);
+	      }catch(IOException ex){
+		      log.error(ex.getMessage());
+		      throw new CommentException("The comment cannot be deleted");
+	      }     
+		      
 	}
 
 }
