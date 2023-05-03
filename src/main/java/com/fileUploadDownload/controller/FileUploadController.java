@@ -13,7 +13,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.fileUploadDownload.entity.DatabaseFile;
 import com.fileUploadDownload.payload.FileUploadResponse;
 import com.fileUploadDownload.service.FileStorageService;
-
+/*
+ * FileUploadController is used to upload a file and multiple file.
+ */
 @RestController
 @RequestMapping("/uploadfile")
 public class FileUploadController
