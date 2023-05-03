@@ -1,6 +1,5 @@
 package com.feignpostcommentapi.controller;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.feignpostcommentapi.config.AppConstants;
 import com.feignpostcommentapi.entity.Post;
 import com.feignpostcommentapi.payloads.ApiResponse;
@@ -31,7 +29,9 @@ import com.feignpostcommentapi.payloads.PostDto;
 import com.feignpostcommentapi.payloads.PostResponse;
 import com.feignpostcommentapi.service.FileService;
 import com.feignpostcommentapi.service.PostService;
-
+/*
+ * PostController is used to post any information.
+ */
 @RestController
 @RequestMapping("/api/v1/")
 public class PostController 
@@ -54,8 +54,13 @@ public class PostController
 	@PostMapping("/user/{userId}/category/{categoryId}/posts")
 	public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto, @PathVariable Integer userId,
 			@PathVariable Integer categoryId) {
+		try{
 		PostDto createPost = this.postService.createPost(postDto, userId, categoryId);
 		return new ResponseEntity<PostDto>(createPost, HttpStatus.CREATED);
+		}catch(IOException ex){
+			log.error(ex.getMessage());
+			thow new PostException("The post is not created",ex);
+		}
 	}
 
 	//Get by user
@@ -70,7 +75,7 @@ public class PostController
 	//Get by category
 	@GetMapping("/category/{categoryId}/posts")
 	public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Integer categoryId) {
-
+		
 		List<PostDto> posts = this.postService.getPostsByCategory(categoryId);
 		return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
 
